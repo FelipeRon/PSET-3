@@ -1,0 +1,8 @@
+{
+  "status": "not_executed",
+  "reason": "Se requiere API key privada y LLM_MODEL explícito; no hay respuestas ni métricas inventadas.",
+  "provider": "openai",
+  "protocol": "3 folds de entrenamiento; 20 filas por fold; ejemplos solo de su train; holdout nunca enviado",
+  "prompt_template": "Clasifica falla actual en una lectura sintética AI4I. Usa solo las mediciones disponibles. No infieras RUL ni eventos futuros. Devuelve únicamente JSON con probability entre 0 y 1. Las etiquetas de los ejemplos son 0 sin falla y 1 con falla. Ejemplos: {examples}. Lectura: {row}",
+  "scope": "La clasificación numérica sí admite prompting; esta comparación sigue pendiente."
+}

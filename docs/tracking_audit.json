@@ -1,0 +1,16 @@
+{
+  "run_counts": {
+    "ablation": 1,
+    "baseline": 2,
+    "candidato": 5,
+    "final": 2,
+    "tuning": 90,
+    "tuning_parent": 3
+  },
+  "total": 103,
+  "all_finished": true,
+  "all_90_trials_have_parent": true,
+  "configurations_per_parent": 30,
+  "fitted_runs_have_models": true,
+  "notes": "Three parent runs group child models and are not fitted estimators."
+}

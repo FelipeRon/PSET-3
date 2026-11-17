@@ -32,6 +32,8 @@ MODEL_NAME=PROJECT+'-modelo'
 PIP=['scikit-learn==1.6.1','pandas==2.2.3','numpy==2.2.4','scipy==1.15.2','mlflow==2.22.0']
 
 def tracking():
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / '.env', override=False)
     ART.mkdir(exist_ok=True);DOCS.mkdir(exist_ok=True)
     uri=os.getenv('MLFLOW_TRACKING_URI', 'sqlite:///'+(ART/'mlflow.db').as_posix())
     mlflow.set_tracking_uri(uri)
@@ -100,7 +102,16 @@ def run_one(name,estimator,phase,params=None,nested=False,derived=True):
 
 def baseline_candidates():
     tracking();path=DOCS/'candidatos.json'
-    if path.exists():return json.loads(path.read_text(encoding='utf-8'))
+    if path.exists():
+        _,_,meta=split()
+        rows=json.loads(path.read_text(encoding='utf-8'))
+        try:
+            recorded=MlflowClient().get_run(rows[0]['run_id'])
+        except Exception as exc:
+            raise RuntimeError('Checkpoint de otro tracking. Restaurar el respaldo o usar scripts/new_experiment.py en un checkout limpio.') from exc
+        if recorded.data.tags.get('dataset_sha256') != meta['dataset_sha256']:
+            raise ValueError('Checkpoint de otro dataset; no se reutilizan resultados sobre datos distintos')
+        return rows
     rows=[]
     rows.append(run_one('dummy',make_pipeline(DummyClassifier(strategy='most_frequent')), 'baseline'))
     rows.append(run_one('business_rule',BusinessRule(),'baseline'))
@@ -136,6 +147,10 @@ def tuning():
         rows=[]
         with mlflow.start_run(run_name='tuning_parent_'+name):
             mlflow.set_tags({'phase':'tuning_parent','family':name,'git_commit':commit()})
+            _,_,meta=split()
+            mlflow.log_params({'seed':SEED,'cv_folds':3,'configurations':30,
+                'source_table':meta['table'],'snapshot_utc':meta['snapshot_utc'],
+                'dataset_sha256':meta['dataset_sha256']})
             for i,params in enumerate(ParameterSampler(spaces()[name],n_iter=30,random_state=SEED)):
                 params={k:(v.item() if isinstance(v,np.generic) else v) for k,v in params.items()}
                 est=make_pipeline(models()[name]).set_params(**params)

@@ -35,7 +35,8 @@ def restore():
     replacements=[(manifest['old_uri'],ROOT.as_uri()),(manifest['old_root'],str(ROOT)),
                   (manifest['old_root'].replace('\\','/'),ROOT.as_posix())]
     with sqlite3.connect(db) as con:
-        for table,col in [('experiments','artifact_location'),('runs','artifact_uri'),('model_versions','source')]:
+        for table,col in [('experiments','artifact_location'),('runs','artifact_uri'),
+                          ('model_versions','source'),('model_versions','storage_location')]:
             for a,b in replacements:
                 con.execute(f'UPDATE {table} SET {col}=replace({col},?,?)',(a,b))
     print('Tracking, datos y aliases restaurados. Ejecutar python -m src.experimentos verify')
