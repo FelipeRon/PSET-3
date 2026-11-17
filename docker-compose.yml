@@ -1,0 +1,28 @@
+name: pset3
+services:
+  mlflow:
+    build: .
+    image: pset3-runner:1
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////app/artifacts/mlflow.db --serve-artifacts --artifacts-destination /app/artifacts/mlruns
+    ports: ["127.0.0.1:5000:5000"]
+    volumes:
+      - ./artifacts:/app/artifacts
+    healthcheck:
+      test: [CMD, curl, -f, http://localhost:5000/health]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  runner:
+    build: .
+    image: pset3-runner:1
+    profiles: [tools]
+    env_file: .env
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    volumes:
+      - .:/app
+      - ./secrets:/run/secrets:ro
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    command: python -m src.experimentos all

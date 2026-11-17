@@ -1,0 +1,10 @@
+.env
+.venv/
+secrets/
+data/
+artifacts/
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+*.pyc
+mlflow.db*
