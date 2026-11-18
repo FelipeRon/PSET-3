@@ -1,8 +1,0 @@
-{
-  "scope": "training subset enriched for descriptive explanation, not evaluation",
-  "rows": 1271,
-  "positive_rows": 271,
-  "method": "permutation AP, 3 repeats",
-  "causal": false,
-  "limitations": "Correlated sensors share importance; enriched sample changes prevalence; not individual SHAP explanations"
-}

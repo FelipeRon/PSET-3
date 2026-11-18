@@ -1,9 +1,0 @@
-.git
-.env
-.venv
-secrets
-data
-artifacts
-__pycache__
-.pytest_cache
-docs/mlflow_snapshot.zip
