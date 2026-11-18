@@ -1,110 +1,92 @@
-# PSet 3 Experimentación de falla actual con AI4I
+# PSet 3 · Experimentación y selección del modelo
 
-Autor: Felipe Ron Andrade. Continuación de [PSet 2](https://github.com/FelipeRon/Pset-02), commit `6ebc989edeaa0a60fa408361b6832ad92438c6ab`.
+El modelo detecta si hay **una falla en la lectura actual** de una máquina a partir de los sensores y el tipo de producto del conjunto AI4I. La fuente es `PSET2.OBT.OBT_READINGS`, la tabla que construye el pipeline del [PSet 2](https://github.com/FelipeRon/Pset-02) en Snowflake.
 
-La fuente principal es `PSET2.OBT.OBT_READINGS`. El alcance es detectar **falla en la lectura actual**, sin atribuir a AI4I historia por máquina, predicción futura o RUL. Se comparan dos baselines, cinco familias y 90 configuraciones de tuning. El registro MLflow conserva champion y challenger.
-
-## Evidencia incluida
-
-Las salidas guardadas corresponden a **UCI oficial y reconstrucción local del contrato OBT**, no a una consulta autenticada de Snowflake. El autor confirmó que la OBT existe, pero su llave permanece en Codespaces. `docs/dataset.json` fija esta procedencia y su hash. No cambiar la etiqueta de procedencia sin ejecutar de nuevo desde Snowflake.
-
-Los cinco notebooks tienen salidas reales. `docs/corridas.csv` se exporta con `mlflow.search_runs`. `docs/mlflow_snapshot.zip` contiene un respaldo portable de tracking SQLite, modelos completos, firmas y aliases. La prueba real de ChatGPT o Claude requiere API key privada y modelo explícito; sin ellos `docs/llm.json` indica `not_executed`, sin métricas inventadas. Consultar `docs/cumplimiento.md`.
-
-## Preparación
-
-Requisitos: Git, Docker Compose v2, 4 GB de RAM o más. Para ejecutar en host usar Python 3.12. Las 90 configuraciones con tres folds pueden tardar varios minutos.
-
-```bash
-git clone https://github.com/FelipeRon/PSET-3.git
-cd PSET-3
-cp .env.example .env
-mkdir -p artifacts secrets
-docker compose build
+```text
+OBT (Snowflake) → Snapshot → EDA → Features → Líneas base → Candidatos → Tuning → Selección → MLflow Model Registry
 ```
 
-Completar `.env` solo localmente. No se necesitan las contraseñas de Kestra o Postgres del PSet 2. Mantener privado el puerto 5000 de Codespaces.
+## Estructura
 
-## Restaurar y reproducir la entrega
+| Ruta | Contenido |
+| --- | --- |
+| `Dockerfile`, `docker-compose.yml` | Entorno Python 3.12 y servidor MLflow con backend SQLite y almacenamiento local de artefactos. |
+| `src/datos.py` | Consulta la OBT, valida sus columnas y crea el snapshot y la división estratificada. |
+| `src/pipeline.py`, `src/metricas.py` | Features físicas, preprocesamiento, métricas y selección del umbral por costo. |
+| `src/experimentos.py` | Entrena, registra y verifica modelos en MLflow. |
+| `scripts/new_experiment.py`, `scripts/execute_notebooks.py` | Archivan los checkpoints de referencia y ejecutan los notebooks en orden. |
+| `notebooks/01…05` | EDA, variables, líneas base y candidatos, tuning y selección. |
 
-Restaurar **antes** de iniciar MLflow; el comando no sobrescribe un tracking existente:
+## 1. Preparar el entorno
 
-```bash
-docker compose run --rm --no-deps runner python -m src.portable restore
-docker compose up -d mlflow
-docker compose run --rm runner python -m src.experimentos verify
-docker compose run --rm runner python scripts/execute_notebooks.py
+Necesitas Docker Desktop con Docker Compose v2 y acceso de lectura a `PSET2.OBT.OBT_READINGS`. Ejecuta los comandos desde la raíz de PSet 3. Docker instala Python y las dependencias dentro de la imagen.
+
+Para **entrenar desde Snowflake**, usa una copia nueva del proyecto con `data/` y `artifacts/` vacíos. Asigna a la copia un nombre de proyecto Compose y un puerto local distintos si ya hay otra instancia de MLflow activa. Para **verificar un modelo ya registrado**, usa la carpeta de su corrida y ve a la sección 5.
+
+## 2. Configurar Snowflake
+
+En una copia nueva, crea `.env` a partir de la plantilla:
+
+```powershell
+Copy-Item -LiteralPath .env.example -Destination .env
 ```
 
-Abrir `http://localhost:5000` o el puerto reenviado 5000 de Codespaces. Seleccionar `ai4i-mantenimiento`; revisar padres/hijas y Models → `ai4i-mantenimiento-modelo`, con aliases champion y challenger. El respaldo incluye el snapshot para reproducir exactamente la métrica. La restauración usa artefactos locales: ejecutar los clientes dentro del runner, con el mismo montaje `/app`; no desde otra ruta host. En experimentación nueva el servidor utiliza artifact serving HTTP.
+Completa `SNOWFLAKE_ACCOUNT` y verifica las demás variables con la configuración de tu PSet 2:
 
-## Nueva experimentación desde Snowflake
+```dotenv
+DATA_SOURCE=snowflake
+SNOWFLAKE_USER=PSET2_SVC
+SNOWFLAKE_ROLE=PSET2_ROLE
+SNOWFLAKE_WAREHOUSE=PSET2_WH
+SNOWFLAKE_DATABASE=PSET2
+SNOWFLAKE_OBT_TABLE=PSET2.OBT.OBT_READINGS
+SNOWFLAKE_PRIVATE_KEY_FILE=/run/secrets/snowflake_key.p8
+```
 
-Usar un checkout nuevo, sin restaurar el respaldo, con `data/` y `artifacts/` vacíos. Conservar la entrega anterior en su carpeta.
+Reutiliza la clave privada del usuario de servicio. En `docker-compose.yml`, el montaje de `runner` que termina en `:/run/secrets:ro` debe apuntar a la carpeta del host que contiene `snowflake_key.p8`. Esta copia referencia directamente la carpeta `secrets/` de PSet 2. Si usas un montaje `./secrets:/run/secrets:ro`, coloca la clave en `secrets/snowflake_key.p8` en la raíz de PSet 3. Mantén `.env` y la clave privada fuera del control de versiones.
 
-1. Copiar la llave autorizada del PSet 2 a `secrets/snowflake_key.p8`. No crear otras credenciales si las existentes funcionan.
-2. Completar `.env`: cuenta, usuario `PSET2_SVC`, rol `PSET2_ROLE`, warehouse `PSET2_WH`, base `PSET2` y `SNOWFLAKE_PRIVATE_KEY_FILE=/run/secrets/snowflake_key.p8`.
-3. Mantener `DATA_SOURCE=snowflake` y `SNOWFLAKE_OBT_TABLE=PSET2.OBT.OBT_READINGS`.
-4. Archivar los checkpoints de la entrega antes de crear el tracking nuevo; después ejecutar:
+## 3. Construir el entorno e iniciar MLflow
 
-```bash
+En una copia nueva, ejecuta en este orden:
+
+```powershell
+docker compose config --quiet
+docker compose build runner
 docker compose run --rm --no-deps runner python scripts/new_experiment.py
-docker compose up -d mlflow
+docker compose up -d --no-build --wait mlflow
+```
+
+Ejecuta `new_experiment.py` una sola vez, antes de arrancar MLflow por primera vez. El script archiva los checkpoints incluidos en la copia para que el pipeline genere los suyos a partir de Snowflake.
+
+En esta copia, abre [MLflow en 127.0.0.1:5003](http://127.0.0.1:5003). SQLite y los artefactos se guardan en `artifacts/mlflow.db` y `artifacts/mlruns/`. Compose configura el acceso a MLflow para el runner.
+
+## 4. Ejecutar los notebooks
+
+```powershell
 docker compose run --rm runner python scripts/execute_notebooks.py
 ```
 
-Se extrae un snapshot una sola vez y se registra Query id, hash y fecha técnica. Cada notebook se ejecuta en kernel nuevo. Las fases terminadas se recuperan de checkpoints; no se vuelven a elegir ganadores sobre test. Un lock protege una evaluación final incompleta: recuperar esa corrida antes de volver a abrir el holdout.
+El script ejecuta cada notebook en un kernel nuevo y guarda sus salidas. Para ejecutarlos manualmente en un entorno con acceso al tracking, usa **Restart Kernel and Run All** en este orden.
 
-También se puede ejecutar sin notebooks:
+| Orden | Notebook | Qué hace |
+| --- | --- | --- |
+| 1 | `01_eda.ipynb` | Consulta Snowflake, guarda el snapshot y explora el conjunto de entrenamiento. |
+| 2 | `02_features.ipynb` | Construye las variables derivadas y verifica qué columnas puede recibir el modelo. |
+| 3 | `03_baseline_candidatos.ipynb` | Ejecuta las líneas base, la ablación y la comparación de familias de modelos. |
+| 4 | `04_tuning.ipynb` | Ajusta tres familias mediante muestreo aleatorio y registra 30 configuraciones por familia como corridas hijas en MLflow. |
+| 5 | `05_seleccion.ipynb` | Selecciona los finalistas por validación cruzada, ajusta los umbrales con predicciones fuera de fold y evalúa los finalistas en el conjunto de prueba. Registra los aliases `champion` y `challenger`, exporta `docs/corridas.csv` y verifica el modelo registrado. |
 
-```bash
-docker compose run --rm runner python -m src.experimentos all
-docker compose run --rm runner python -m src.llm
-docker compose run --rm runner python -m src.explain
-docker compose run --rm runner python scripts/build_report.py
+El primer notebook guarda `data/snapshot.parquet`. Las fases siguientes reutilizan ese archivo. `docs/dataset.json` registra el identificador de la consulta, la fecha y el hash SHA-256 del dataset. `docs/split.json` conserva la división 80/20 por `reading_id`. La división y la validación cruzada estratificada de tres folds usan la semilla 42. La imputación, la codificación y el escalado se ajustan dentro del pipeline de cada fold.
+
+## 5. Reproducir el modelo registrado
+
+Desde la **carpeta de la corrida que registró el modelo**, conserva `data/`, `artifacts/`, `docs/dataset.json`, `docs/split.json` y `docs/seleccion.json`.
+
+```powershell
+docker compose up -d --wait mlflow
+docker compose run --rm runner python -m src.experimentos verify
 ```
 
-## Notebooks y ejecución con Python
+El comando carga `models:/ai4i-mantenimiento-modelo@champion`, valida el hash del snapshot y recalcula las métricas sobre la misma partición de prueba. Si coinciden con las registradas en `docs/seleccion.json`, devuelve `reproduced: True`.
 
-Orden: `01_eda.ipynb`, `02_features.ipynb`, `03_baseline_candidatos.ipynb`, `04_tuning.ipynb`, `05_seleccion.ipynb`. Todos importan la preparación de `src/pipeline.py`. Para revisión manual usar Restart Kernel y Run All en ese orden.
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-export MLFLOW_TRACKING_URI=http://127.0.0.1:5000
-python scripts/execute_notebooks.py
-```
-
-En Windows activar `.venv\Scripts\Activate.ps1`. En host, cambiar la ruta de la llave a su ruta local; `/run/secrets` es solo para Docker. No es necesario regenerar los notebooks con `build_notebooks.py`, que es una utilidad de desarrollo. Para ensayo sin cuenta, `DATA_SOURCE=uci_replay` descarga el ZIP oficial con TLS y conserva su procedencia explícita.
-
-## Diseño experimental
-
-- Split estratificado 80/20, semilla 42, persistido por UDI antes de EDA. EDA usa solo train; no hay tiempo o grupos reales para justificar otro esquema.
-- Tres folds estratificados fijos. Imputación, one hot y escalado dentro de Pipeline y ColumnTransformer.
-- Lista blanca de seis sensores/tipo. Se excluyen target, subtipos de falla, baseline_alert, identificadores, hash y quality_tier redundante.
-- Features físicas: diferencia térmica y potencia. EDA aporta evidencia train; la ablación se ejecuta después de las dos líneas base.
-- Técnica: Average Precision (AP), por desbalance. Negocio: costo por 1.000 lecturas con Cp=500, Ce=8.000, Cr=1.500 USD como supuestos, no costos observados.
-- Baselines: DummyClassifier de clase mayoritaria y regla desgaste >=200 o torque >=60. Cinco familias: logística, Random Forest, HistGradientBoosting, MLP y GaussianNB. Defaults salvo semilla; se conservan warnings de convergencia.
-- Las tres mejores familias por AP de CV reciben 30 configuraciones aleatorias cada una. Cada configuración registra pipeline, firma, ejemplo, parámetros, fuente, semilla, commit, métricas y tiempos.
-- Champion y challenger son de familias diferentes, congelados por CV antes de test. El umbral minimiza costo sobre probabilidades OOF de train con máximo 12 % de alertas en ese conjunto. Se reporta la tasa real de test; no se garantiza capacidad futura ni calibración.
-- Test se evalúa una vez por finalista. Las verificaciones posteriores reproducen el alias sin cambiar decisiones. Notebook 05 exige igualdad de métricas con tolerancia 1e-12.
-
-## ChatGPT o Claude mediante prompting
-
-La clasificación numérica admite prompting; no se declara imposible. Configurar en `.env`:
-
-```env
-LLM_PROVIDER=openai
-LLM_MODEL=nombre-del-modelo-autorizado
-OPENAI_API_KEY=solo-en-tu-env-local
-```
-
-Para Claude: `LLM_PROVIDER=anthropic`, `LLM_MODEL` autorizado y `ANTHROPIC_API_KEY`. Ejecutar `python -m src.llm`. Usa 60 lecturas naturales de folds de train y ejemplos exclusivos del train de cada fold; nunca envía holdout. Registra prompt, respuestas, modelo, tiempo y métricas. No participa en el ranking principal porque su muestra y presupuesto son diferentes. Sin API configurada se registra el pendiente; no se fabrica evidencia. No pegar claves en notebooks ni GitHub.
-
-## Entregables y límites
-
-El memo `docs/PSet3_memo_Ron_Andrade.pdf` tiene seis páginas principales y anexos. Los JSON, CSV y figuras en docs contienen las mediciones; `dataset.json` y `split.json` fijan el snapshot. `mlflow_snapshot.zip` permite restaurar el registro sin acceso al servidor original.
-
-Pruebas: `python -m pytest tests -q`. Actualizar gráficos y memo tras una corrida nueva: `python scripts/build_report.py`. La captura MLflow incluida corresponde a la corrida local; debe reemplazarse si se presenta una corrida cloud distinta.
-
-AI4I es sintético y describe falla actual. No demuestra ahorro real ni transferencia a planta. Reutilizar folds para tuning puede dar optimismo; no equivale a CV anidada. El LLM sigue pendiente hasta configurar API. La infraestructura Docker queda preparada; su build en Codespaces requiere comprobación en ese entorno. Ninguna limitación se oculta mediante resultados simulados.
+En la interfaz de MLflow, abre el experimento `ai4i-mantenimiento` para inspeccionar las corridas y el modelo `ai4i-mantenimiento-modelo` para consultar los aliases.

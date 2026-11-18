@@ -1,7 +1,5 @@
 # Revisión frente a CD PSet 3
 
-Estado del 17 de noviembre de 2026: implementación y experimentación local ejecutadas; no se declara cumplimiento total. El autor confirmó que la OBT existe en Snowflake. La corrida aquí entregada es una reconstrucción del contrato desde UCI oficial, identificada por su hash.
-
 | Requisito | Evidencia | Estado |
 |---|---|---|
 | Leer OBT Snowflake | src/datos.py, Query id y snapshot previstos | Implementado; repetir con llave privada del autor en Codespaces |
