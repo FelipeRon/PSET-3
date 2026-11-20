@@ -19,7 +19,7 @@ OBT (Snowflake) → Snapshot → EDA → Features → Líneas base → Candidato
 
 ## 1. Preparar el entorno
 
-Necesitas Docker Desktop con Docker Compose v2 y acceso de lectura a `PSET2.OBT.OBT_READINGS`. Ejecuta los comandos desde la raíz de PSet 3. Docker instala Python y las dependencias dentro de la imagen.
+Necesitas Docker con Docker Compose v2. Para entrenar con datos nuevos también necesitas acceso de lectura a `PSET2.OBT.OBT_READINGS`. Ejecuta los comandos desde la raíz de PSet 3. Docker instala Python y usa las versiones registradas en `requirements.lock` al resolver las dependencias.
 
 Para **entrenar desde Snowflake**, usa una copia nueva del proyecto con `data/` y `artifacts/` vacíos. Asigna a la copia un nombre de proyecto Compose y un puerto local distintos si ya hay otra instancia de MLflow activa. Para **verificar un modelo ya registrado**, usa la carpeta de su corrida y ve a la sección 5.
 
@@ -43,7 +43,7 @@ SNOWFLAKE_OBT_TABLE=PSET2.OBT.OBT_READINGS
 SNOWFLAKE_PRIVATE_KEY_FILE=/run/secrets/snowflake_key.p8
 ```
 
-Reutiliza la clave privada del usuario de servicio. En `docker-compose.yml`, el montaje de `runner` que termina en `:/run/secrets:ro` debe apuntar a la carpeta del host que contiene `snowflake_key.p8`. Esta copia referencia directamente la carpeta `secrets/` de PSet 2. Si usas un montaje `./secrets:/run/secrets:ro`, coloca la clave en `secrets/snowflake_key.p8` en la raíz de PSet 3. Mantén `.env` y la clave privada fuera del control de versiones.
+Reutiliza la clave privada del usuario de servicio. En `docker-compose.yml`, el montaje de `runner` que termina en `:/run/secrets:ro` debe apuntar a la carpeta del host que contiene `snowflake_key.p8`. Por defecto Compose monta `./secrets`. Coloca allí `snowflake_key.p8` o define `SNOWFLAKE_SECRETS_DIR` en `.env` con la ruta local de la carpeta que ya contiene la clave. Mantén `.env` y la clave privada fuera del control de versiones.
 
 ## 3. Construir el entorno e iniciar MLflow
 
@@ -80,13 +80,25 @@ El primer notebook guarda `data/snapshot.parquet`. Las fases siguientes reutiliz
 
 ## 5. Reproducir el modelo registrado
 
-Desde la **carpeta de la corrida que registró el modelo**, conserva `data/`, `artifacts/`, `docs/dataset.json`, `docs/split.json` y `docs/seleccion.json`.
+En otra computadora, abre una **copia limpia** del proyecto. Conserva `docs/mlflow_snapshot.zip`, `docs/dataset.json`, `docs/split.json` y `docs/seleccion.json`. El ZIP contiene la base de tracking, los artefactos y el snapshot. Puedes usar `.env.example` tal cual para esta comprobación offline respecto de Snowflake.
 
 ```powershell
-docker compose up -d --wait mlflow
+Copy-Item -LiteralPath .env.example -Destination .env
+docker compose build runner
+docker compose run --rm --no-deps runner python -m src.portable restore
+docker compose up -d --no-build --wait mlflow
 docker compose run --rm runner python -m src.experimentos verify
+docker compose run --rm runner python -m pytest -q
 ```
+
+En macOS o Linux, usa `cp .env.example .env` en lugar de `Copy-Item`. Ejecuta `restore` antes de iniciar MLflow por primera vez. Si ya restauraste el respaldo, continúa desde `docker compose up`. Si ejecutas dos copias en el mismo equipo, asigna un `COMPOSE_PROJECT_NAME` distinto a cada una y fija otro puerto con `MLFLOW_PORT` en `.env`.
 
 El comando carga `models:/ai4i-mantenimiento-modelo@champion`, valida el hash del snapshot y recalcula las métricas sobre la misma partición de prueba. Si coinciden con las registradas en `docs/seleccion.json`, devuelve `reproduced: True`.
 
 En la interfaz de MLflow, abre el experimento `ai4i-mantenimiento` para inspeccionar las corridas y el modelo `ai4i-mantenimiento-modelo` para consultar los aliases.
+
+## Prueba exploratoria con ChatGPT
+
+Los prompts enviados, las respuestas JSON y las etiquetas de corrección están en `docs/llm/`. Se usaron tres chats independientes, cada uno con seis ejemplos del entrenamiento de su fold y veinte consultas del segmento de validación del mismo fold. Las etiquetas de consulta se incorporan solo al calcular las métricas. El conjunto de prueba queda fuera del protocolo.
+
+El script `scripts/prepare_chatgpt.py` prepara la muestra. `scripts/evaluate_chatgpt.py` valida las respuestas conservadas, calcula métricas, crea una corrida en MLflow y actualiza `docs/corridas.csv`. La interfaz web utilizada no mostró la versión interna del modelo.

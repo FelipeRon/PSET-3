@@ -1,0 +1,365 @@
+{
+  "snapshot": "dbdb2601fec1714c56141c3b24833f6fb671342cadb68d516238a58cbb9f9e1e",
+  "records": [
+    {
+      "id": "1-01",
+      "reading_id": 1294,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-02",
+      "reading_id": 3632,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-03",
+      "reading_id": 8309,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-04",
+      "reading_id": 3973,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-05",
+      "reading_id": 5433,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-06",
+      "reading_id": 6379,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-07",
+      "reading_id": 7256,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-08",
+      "reading_id": 7710,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-09",
+      "reading_id": 9196,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-10",
+      "reading_id": 8143,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-11",
+      "reading_id": 5081,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-12",
+      "reading_id": 7508,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-13",
+      "reading_id": 4965,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-14",
+      "reading_id": 1796,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-15",
+      "reading_id": 5205,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-16",
+      "reading_id": 7696,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-17",
+      "reading_id": 4363,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-18",
+      "reading_id": 9668,
+      "fold": 1,
+      "y": 1
+    },
+    {
+      "id": "1-19",
+      "reading_id": 7106,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "1-20",
+      "reading_id": 4412,
+      "fold": 1,
+      "y": 0
+    },
+    {
+      "id": "2-01",
+      "reading_id": 8936,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-02",
+      "reading_id": 2279,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-03",
+      "reading_id": 7591,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-04",
+      "reading_id": 2840,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-05",
+      "reading_id": 8493,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-06",
+      "reading_id": 3849,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-07",
+      "reading_id": 2841,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-08",
+      "reading_id": 2780,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-09",
+      "reading_id": 4200,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-10",
+      "reading_id": 9536,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-11",
+      "reading_id": 7888,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-12",
+      "reading_id": 3781,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-13",
+      "reading_id": 1465,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-14",
+      "reading_id": 8985,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-15",
+      "reading_id": 1936,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-16",
+      "reading_id": 6389,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-17",
+      "reading_id": 2684,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-18",
+      "reading_id": 4158,
+      "fold": 2,
+      "y": 1
+    },
+    {
+      "id": "2-19",
+      "reading_id": 9585,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "2-20",
+      "reading_id": 4498,
+      "fold": 2,
+      "y": 0
+    },
+    {
+      "id": "3-01",
+      "reading_id": 1042,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-02",
+      "reading_id": 3788,
+      "fold": 3,
+      "y": 1
+    },
+    {
+      "id": "3-03",
+      "reading_id": 7102,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-04",
+      "reading_id": 9579,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-05",
+      "reading_id": 5881,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-06",
+      "reading_id": 1633,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-07",
+      "reading_id": 4096,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-08",
+      "reading_id": 3422,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-09",
+      "reading_id": 9440,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-10",
+      "reading_id": 6144,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-11",
+      "reading_id": 203,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-12",
+      "reading_id": 9307,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-13",
+      "reading_id": 4095,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-14",
+      "reading_id": 6714,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-15",
+      "reading_id": 9877,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-16",
+      "reading_id": 8519,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-17",
+      "reading_id": 4214,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-18",
+      "reading_id": 4518,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-19",
+      "reading_id": 9884,
+      "fold": 3,
+      "y": 0
+    },
+    {
+      "id": "3-20",
+      "reading_id": 7277,
+      "fold": 3,
+      "y": 0
+    }
+  ]
+}

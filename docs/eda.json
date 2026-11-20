@@ -4,7 +4,7 @@
   "holdout_rows": 2000,
   "positives_train": 271,
   "prevalence_train": 0.033875,
-  "source_scope": "Reconstrucción local del contrato OBT desde UCI oficial; no es exportación Snowflake",
+  "source_scope": "OBT real exportada de Snowflake",
   "feature_target_spearman": {
     "air_temperature_k": 0.08639466254461013,
     "process_temperature_k": 0.04459694159495342,

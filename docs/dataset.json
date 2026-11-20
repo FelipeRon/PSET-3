@@ -1,11 +1,10 @@
 {
-  "source": "uci_replay",
+  "source": "snowflake",
   "table": "PSET2.OBT.OBT_READINGS",
-  "source_url": "https://archive.ics.uci.edu/static/public/601/ai4i+2020+predictive+maintenance+dataset.zip",
-  "csv_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
-  "scope": "Reconstrucción local del contrato OBT desde UCI oficial; no es exportación Snowflake",
-  "snapshot_utc": "2026-11-17T17:56:22.771653+00:00",
-  "dataset_sha256": "d13d49b43f3f80dd82daf74332f7dece6ce30508aba39d36ff86e35b4cb61392",
+  "query_id": "01c88001-0001-db36-0001-77be00211006",
+  "scope": "OBT real exportada de Snowflake",
+  "snapshot_utc": "2026-11-18T19:45:16.585947+00:00",
+  "dataset_sha256": "dbdb2601fec1714c56141c3b24833f6fb671342cadb68d516238a58cbb9f9e1e",
   "rows": 10000,
   "target_failures": 339
 }

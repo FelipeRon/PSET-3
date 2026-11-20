@@ -1,0 +1,23 @@
+Clasifica falla actual en lecturas del conjunto sintético público AI4I, sin herramientas ni búsquedas. Estima cada probabilidad por separado. Orden de columnas: tipo, temperatura aire K, temperatura proceso K, rpm, torque Nm, desgaste min. En ejemplos el último valor es etiqueta (0 sin falla, 1 con falla). En consultas el primer valor es el identificador. Devuelve únicamente un objeto JSON con los 20 identificadores y su probabilidad entre 0 y 1.
+Ejemplos: L,299.1,310.5,1389,61.4,64,0; L,296.9,308,1658,41,74,0; H,301.8,311.1,1463,50.1,149,0; L,299.1,310,1367,56.3,203,1; L,302.5,310.9,1330,56.9,97,1; L,296.9,307.8,1400,57.1,202,1.
+Consultas:
+3-01,L,296.6,307.6,1809,25.1,86
+3-02,L,302.3,310.8,1377,47.3,22
+3-03,L,300.8,310.2,1850,22.8,33
+3-04,L,299.4,310.7,1551,41.2,3
+3-05,L,301.5,311.1,1434,49.6,129
+3-06,L,297.9,307.9,1426,43.6,89
+3-07,H,302,310.5,1459,43.2,148
+3-08,M,301.5,310.5,1612,29.8,148
+3-09,M,298.1,308.8,1433,48.2,62
+3-10,M,301,310.9,1575,34.6,150
+3-11,M,298.4,308.5,1636,35.7,107
+3-12,M,298.3,309.2,1783,28.3,130
+3-13,L,302,310.5,1651,30.9,146
+3-14,L,301.3,310.6,1416,45.2,88
+3-15,H,298.8,309.7,1461,55.1,118
+3-16,M,298.3,309.6,1681,27.1,194
+3-17,L,302.1,310.7,1465,40.7,13
+3-18,L,302.4,310.3,1520,31.6,121
+3-19,H,298.7,309.6,1654,34.3,136
+3-20,M,300.1,310.3,1350,48.8,50

@@ -19,7 +19,8 @@ def pack():
         for name in ['snapshot.parquet']:
             z.write(ROOT/'data'/name,'data/'+name)
         z.writestr('manifest.json',json.dumps({'old_root':str(ROOT),'old_uri':ROOT.as_uri(),
-            'scope':'tracking SQLite y modelos reales de la corrida local; snapshot UCI replay'}))
+            'scope':'tracking SQLite, modelos y snapshot de la corrida documentada',
+            'dataset_sha256':json.loads((DOCS/'dataset.json').read_text(encoding='utf-8'))['dataset_sha256']}))
     print(f'Backup {dest.stat().st_size/1024**2:.1f} MiB')
 
 def restore():

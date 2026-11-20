@@ -1,10 +1,10 @@
-name: pset3
+name: pset3-snowflake-20261118
 services:
   mlflow:
     build: .
     image: pset3-runner:1
     command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////app/artifacts/mlflow.db --serve-artifacts --artifacts-destination /app/artifacts/mlruns
-    ports: ["127.0.0.1:5000:5000"]
+    ports: ["127.0.0.1:${MLFLOW_PORT:-5003}:5000"]
     volumes:
       - ./artifacts:/app/artifacts
     healthcheck:
@@ -21,7 +21,7 @@ services:
       MLFLOW_TRACKING_URI: http://mlflow:5000
     volumes:
       - .:/app
-      - ./secrets:/run/secrets:ro
+      - "${SNOWFLAKE_SECRETS_DIR:-./secrets}:/run/secrets:ro"
     depends_on:
       mlflow:
         condition: service_healthy

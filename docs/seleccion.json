@@ -4,14 +4,14 @@
     {
       "name": "hist_boosting/config_17",
       "phase": "tuning",
-      "run_id": "a93d261c04c5417bb1a57f8622d2bc1c",
+      "run_id": "d520cc5a52a54790b0aa3865fc2555fc",
       "cv_ap_mean": 0.8787806712872027,
       "cv_ap_std": 0.026033407825595073,
       "train_ap": 0.9774987043044862,
       "fold_train_ap_mean": 0.9821979762669705,
       "cv_cost_per_1000": 124312.64452783612,
-      "fit_seconds": 0.11908519999997225,
-      "cv_fit_seconds": 0.3067650000011781,
+      "fit_seconds": 0.104064216999177,
+      "cv_fit_seconds": 0.24606669700006023,
       "gap_ap": 0.09871803301728344,
       "fold_ap": [
         0.8935207006056531,
@@ -42,8 +42,8 @@
         "tn": 7564
       },
       "alias": "champion",
-      "final_run_id": "f0e6a657db9048b081b385c75c350a84",
-      "version": 1,
+      "final_run_id": "d07d9f7f061848138579716948af2c6f",
+      "version": "1",
       "test": {
         "ap": 0.9098503380639453,
         "roc_auc": 0.9852636706856656,
@@ -57,19 +57,19 @@
         "fn": 7,
         "tn": 1896
       },
-      "inference_seconds": 0.016835899994475767
+      "inference_seconds": 0.011063840000133496
     },
     {
       "name": "random_forest/config_13",
       "phase": "tuning",
-      "run_id": "00f8f23186ed4383b284e91cc45c58a2",
+      "run_id": "edb3623fd7b948c29d6be6555fd343ea",
       "cv_ap_mean": 0.8730247496587008,
       "cv_ap_std": 0.03390774676845306,
       "train_ap": 0.957852990085486,
       "fold_train_ap_mean": 0.9568501232334169,
       "cv_cost_per_1000": 127250.26963527534,
-      "fit_seconds": 1.331427299999632,
-      "cv_fit_seconds": 2.967125599985593,
+      "fit_seconds": 1.3380313269990438,
+      "cv_fit_seconds": 2.62517598499835,
       "gap_ap": 0.08482824042678516,
       "fold_ap": [
         0.9010105238513754,
@@ -100,8 +100,8 @@
         "tn": 7448
       },
       "alias": "challenger",
-      "final_run_id": "e9dcce61dcad4df68dc179df40330978",
-      "version": 2,
+      "final_run_id": "1bb7401579664e38af7d1ab7e1bb8ea9",
+      "version": "2",
       "test": {
         "ap": 0.8933236210766702,
         "roc_auc": 0.9776024540250883,
@@ -115,20 +115,19 @@
         "fn": 6,
         "tn": 1860
       },
-      "inference_seconds": 0.011929399988730438
+      "inference_seconds": 0.011019494999345625
     }
   ],
   "cv_difference": 0.005755921628501914,
   "difference_exceeds_fold_std": false,
   "holdout_policy": "Evaluado una vez para cada finalista; no cambia el ranking de CV",
   "source": {
-    "source": "uci_replay",
+    "source": "snowflake",
     "table": "PSET2.OBT.OBT_READINGS",
-    "source_url": "https://archive.ics.uci.edu/static/public/601/ai4i+2020+predictive+maintenance+dataset.zip",
-    "csv_sha256": "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e",
-    "scope": "Reconstrucción local del contrato OBT desde UCI oficial; no es exportación Snowflake",
-    "snapshot_utc": "2026-11-17T17:56:22.771653+00:00",
-    "dataset_sha256": "d13d49b43f3f80dd82daf74332f7dece6ce30508aba39d36ff86e35b4cb61392",
+    "query_id": "01c88001-0001-db36-0001-77be00211006",
+    "scope": "OBT real exportada de Snowflake",
+    "snapshot_utc": "2026-11-18T19:45:16.585947+00:00",
+    "dataset_sha256": "dbdb2601fec1714c56141c3b24833f6fb671342cadb68d516238a58cbb9f9e1e",
     "rows": 10000,
     "target_failures": 339
   },
